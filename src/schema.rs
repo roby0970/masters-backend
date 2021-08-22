@@ -3,7 +3,9 @@ table! {
         id -> Int4,
         x -> Int4,
         y -> Int4,
-        idpoi -> Nullable<Int4>,
+        idspace -> Int4,
+        idpoi -> Int4,
+        blocked -> Bool,
     }
 }
 
@@ -11,7 +13,7 @@ table! {
     pois (id) {
         id -> Int4,
         title -> Varchar,
-        spaceid -> Nullable<Int4>,
+        idspace -> Int4,
     }
 }
 
@@ -26,7 +28,8 @@ table! {
 }
 
 joinable!(coordinates -> pois (idpoi));
-joinable!(pois -> spaces (spaceid));
+joinable!(coordinates -> spaces (idspace));
+joinable!(pois -> spaces (idspace));
 
 allow_tables_to_appear_in_same_query!(
     coordinates,

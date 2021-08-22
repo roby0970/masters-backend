@@ -19,6 +19,7 @@ async fn find(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
 #[post("/spaces")]
 async fn create(space: web::Json<Space>) -> Result<HttpResponse, CustomError> {
     let space = Spaces::create(space.into_inner())?;
+    
     Ok(HttpResponse::Ok().json(space))
 }
 

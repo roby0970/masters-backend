@@ -6,6 +6,8 @@ extern crate diesel;
 #[macro_use]
 extern crate diesel_migrations;
 pub mod spaces;
+pub mod pois;
+pub mod coordinates;
 pub mod db;
 pub mod error_handler;
 pub mod schema;
@@ -24,6 +26,8 @@ async fn main() -> std::io::Result<()> {
             .route("/welcome", web::get().to(welcome))
             .route("/welcome/{name}", web::get().to(welcome))
             .configure(spaces::init_routes)
+            .configure(pois::init_routes)
+            .configure(coordinates::init_routes)
     })
     .bind("127.0.0.1:8000")?
     .run()
