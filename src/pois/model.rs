@@ -24,6 +24,11 @@ impl Pois {
         let pois = pois::table.load::<Pois>(&conn)?;
         Ok(pois)
     }
+    pub fn find_by_space_id(idspace: i32) -> Result<Vec<Self>, CustomError> {
+        let conn = db::connection()?;
+        let pois = pois::table.filter(pois::idspace.eq(idspace)).load(&conn)?;
+        Ok(pois)
+    }
     pub fn find(id: i32) -> Result<Self, CustomError> {
         let conn = db::connection()?;
         let poi = pois::table.filter(pois::id.eq(id)).first(&conn)?;

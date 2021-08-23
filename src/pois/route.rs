@@ -9,6 +9,11 @@ async fn find_all() -> Result<HttpResponse, CustomError> {
     let pois = Pois::find_all()?;
     Ok(HttpResponse::Ok().json(pois))
 }
+#[get("/pois_space/{idspace}")]
+async fn find_by_space_id(idspace: web::Path<i32>) -> Result<HttpResponse, CustomError> {
+    let pois = Pois::find_by_space_id(idspace.into_inner())?;
+    Ok(HttpResponse::Ok().json(pois))
+}
 
 #[get("/pois/{id}")]
 async fn find(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
@@ -40,6 +45,7 @@ async fn delete(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
 pub fn init_routes(config: &mut web::ServiceConfig) {
     config.service(find_all);
     config.service(find);
+    config.service(find_by_space_id);
     config.service(create);
     config.service(update);
     config.service(delete);

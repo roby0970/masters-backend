@@ -30,6 +30,11 @@ impl Coordinates {
         let coordinates = coordinates::table.load::<Coordinates>(&conn)?;
         Ok(coordinates)
     }
+    pub fn find_by_space_id(idspace: i32) -> Result<Vec<Self>, CustomError> {
+        let conn = db::connection()?;
+        let coordinates = coordinates::table.filter(coordinates::idspace.eq(idspace)).load(&conn)?;
+        Ok(coordinates)
+    }
     pub fn find(id: i32) -> Result<Self, CustomError> {
         let conn = db::connection()?;
         let coordinate = coordinates::table.filter(coordinates::id.eq(id)).first(&conn)?;
