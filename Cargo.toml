@@ -34,3 +34,5 @@ r2d2 = "0.8"
 lazy_static = "1.4"
 listenfd = "0.3"
 uuid = { version = "0.6", features = ["serde", "v4"] }
+
+pathfinding = "2.2.1"

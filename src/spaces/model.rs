@@ -13,7 +13,7 @@ pub struct Space {
     pub longitude: f64,
     pub latitude: f64,
 }
-#[derive(Deserialize, Serialize, Queryable, Insertable)]
+#[derive(Deserialize, Serialize, Debug, Queryable, Insertable)]
 #[table_name = "spaces"]
 pub struct Spaces {
     pub id: i32,

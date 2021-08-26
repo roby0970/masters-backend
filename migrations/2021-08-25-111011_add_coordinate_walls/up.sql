@@ -1,0 +1,2 @@
+-- Your SQL goes here
+alter table coordinates add column wallup boolean not null default false, add column wallright boolean not null default false, add column walldown boolean not null default false, add column wallleft boolean not null default false

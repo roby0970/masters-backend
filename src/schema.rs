@@ -6,6 +6,10 @@ table! {
         idspace -> Int4,
         idpoi -> Int4,
         blocked -> Bool,
+        wallup -> Bool,
+        wallright -> Bool,
+        walldown -> Bool,
+        wallleft -> Bool,
     }
 }
 
@@ -14,6 +18,7 @@ table! {
         id -> Int4,
         title -> Varchar,
         idspace -> Int4,
+        color -> Int8,
     }
 }
 

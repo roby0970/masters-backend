@@ -4,19 +4,21 @@ use crate::schema::pois;
 use diesel::prelude::*;
 use crate::db;
 use crate::error_handler::CustomError;
-#[derive(Deserialize, Serialize, AsChangeset, Insertable)]
+#[derive(Deserialize, Serialize, AsChangeset, Debug, Insertable)]
 #[table_name = "pois"]
 pub struct Poi {
     
     pub title: String,
-    pub idspace: i32
+    pub idspace: i32,
+    pub color: i64
 }
-#[derive(Deserialize, Serialize, Queryable, Insertable)]
+#[derive(Deserialize, Serialize,  Debug,Queryable, Insertable)]
 #[table_name = "pois"]
 pub struct Pois {
     pub id: i32,
     pub title: String,
-    pub idspace: i32
+    pub idspace: i32,
+    pub color: i64
 }
 impl Pois {
     pub fn find_all() -> Result<Vec<Self>, CustomError> {
@@ -58,6 +60,6 @@ impl Pois {
 }
 impl Poi {
     fn from(poi: Poi) -> Poi {
-        Poi { title: poi.title, idspace: poi.idspace }
+        Poi { title: poi.title, idspace: poi.idspace, color: poi.color }
     }
 }

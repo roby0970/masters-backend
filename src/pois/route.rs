@@ -1,5 +1,5 @@
 
-use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
+use actix_web::{delete, get, post, put, web, HttpResponse};
 use serde_json::json;
 use crate::error_handler::CustomError;
 use crate::pois::{Poi, Pois};

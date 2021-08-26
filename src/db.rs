@@ -4,7 +4,6 @@ use diesel::r2d2::ConnectionManager;
 use diesel_migrations::embed_migrations;
 use lazy_static::lazy_static;
 use r2d2;
-use std::env;
 
 type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 pub type DbConnection = r2d2::PooledConnection<ConnectionManager<PgConnection>>;
