@@ -15,6 +15,8 @@ pub struct RawCoordinate {
 }
 
 pub fn classify(source: Vec<BLEReading>) -> Result<RawCoordinate, Error> {
+    println!("{:?}", source);
+    println!("{:?}", serde_json::to_string(&source).unwrap().as_str());
     let output = Command::new("cmd")
         .args(&[
             "/C",
@@ -26,6 +28,7 @@ pub fn classify(source: Vec<BLEReading>) -> Result<RawCoordinate, Error> {
         .expect("failed to execute process");
     let response = String::from_utf8(output.stdout).unwrap();
     let j: Vec<&str> = response.split("\r\n").collect::<Vec<&str>>();
+    println!("{:?}", j);
     let predicted_coordinate: Result<RawCoordinate, Error> =
         serde_json::from_value(serde_json::from_str(j[1]).unwrap());
     predicted_coordinate

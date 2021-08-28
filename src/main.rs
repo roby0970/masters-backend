@@ -1,9 +1,10 @@
 
+use std::borrow::Borrow;
+
 use actix_web::{ App, HttpRequest, HttpResponse, HttpServer, Responder, web, Error};
 use actix_cors::Cors;
-use actix::prelude::*;
+use actix::{dev::MessageResponse, prelude::*};
 use actix_web_actors::ws;
-
 
 
 
@@ -18,6 +19,7 @@ pub mod route_request;
 pub mod coordinates;
 pub mod db;
 pub mod astar;
+pub mod websocket;
 pub mod python_knn;
 pub mod error_handler;
 pub mod schema;
@@ -30,7 +32,7 @@ async fn welcome(request: HttpRequest) -> impl Responder {
 }
 
 
-struct MyWs;
+pub struct MyWs;
 
 impl Actor for MyWs {
     type Context = ws::WebsocketContext<Self>;
@@ -38,6 +40,7 @@ impl Actor for MyWs {
 
 /// Handler for ws::Message message
 impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for MyWs {
+    
     fn handle(
         &mut self,
         msg: Result<ws::Message, ws::ProtocolError>,
@@ -50,28 +53,33 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for MyWs {
             _ => (),
         }
     }
+
+   
 }
 
 
-async fn websocket(req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
-    let resp = ws::start(MyWs {}, &req, stream);
-    println!("{:?}", resp);
-    resp
-}
+
+
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
+    
+
+    
+    
+    HttpServer::new( move || {
         App::new()
          .wrap(Cors::permissive())
-         .route("/ws/", web::get().to(websocket))
+         //.route("/ws/", web::get().to(websocket))
             .route("/welcome", web::get().to(welcome))
             .route("/welcome/{name}", web::get().to(welcome))
             .configure(spaces::init_routes)
             .configure(pois::init_routes)
             .configure(coordinates::init_routes)
             .configure(route_request::init_routes)
+            .service(websocket::route::websocket)
     })
-    .bind("127.0.0.1:8000")?
+    .bind("192.168.36.88:8000")?
     .run()
     .await
 }
