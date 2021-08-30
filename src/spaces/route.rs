@@ -2,7 +2,10 @@
 use actix_web::{delete, get, post, put, web, HttpResponse};
 use serde_json::json;
 use crate::error_handler::CustomError;
+
 use crate::spaces::{Space, Spaces};
+
+use super::RawLocation;
 
 #[get("/spaces")]
 async fn find_all() -> Result<HttpResponse, CustomError> {
@@ -10,11 +13,17 @@ async fn find_all() -> Result<HttpResponse, CustomError> {
     Ok(HttpResponse::Ok().json(spaces))
 }
 
+#[post("/spaces/find")]
+async fn find_closest(raw: web::Json<RawLocation>) -> Result<HttpResponse, CustomError> {
+    let space = Spaces::find_closest(raw.x, raw.y)?;
+    Ok(HttpResponse::Ok().json(space))
+}
 #[get("/spaces/{id}")]
 async fn find(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
     let space = Spaces::find(id.into_inner())?;
     Ok(HttpResponse::Ok().json(space))
 }
+
 
 #[post("/spaces")]
 async fn create(space: web::Json<Space>) -> Result<HttpResponse, CustomError> {
@@ -41,6 +50,7 @@ async fn delete(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
 pub fn init_routes(config: &mut web::ServiceConfig) {
     config.service(find_all);
     config.service(find);
+    config.service(find_closest);
     config.service(create);
     config.service(update);
     config.service(delete);

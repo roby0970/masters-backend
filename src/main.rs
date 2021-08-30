@@ -79,7 +79,7 @@ async fn main() -> std::io::Result<()> {
             .configure(route_request::init_routes)
             .service(websocket::route::websocket)
     })
-    .bind("192.168.36.88:8000")?
+    .bind("192.168.195.88:8000")?
     .run()
     .await
 }

@@ -8,6 +8,11 @@ use micromath::F32Ext;
 pub struct CoordinateRequest {
     pub source: Vec<BLEReading>
 }
+#[derive(Deserialize, Serialize, Clone)]
+pub struct CoordinateResponse {
+    pub x: f32,
+    pub y: f32,
+}
 
 #[derive(Deserialize, Serialize,Debug, Clone, Copy)]
 pub struct BLEReading {
@@ -32,7 +37,7 @@ impl RouteRequest {
         predicted_coordinate
         
     }
-    pub fn handle(req: RouteRequest) ->Vec<(f32,f32)>{
+    pub fn handle(req: RouteRequest) ->Vec<CoordinateResponse>{
         let source = req.source;
 
 
@@ -62,23 +67,28 @@ impl RouteRequest {
         let result = crate::astar::pathfind(source_coordinate, space_coordinates, dest).unwrap();
         
         //Converting the main coordinates to new AR Space coordinates, while rotating the axes based on orientation
-        let mut converted : Vec<(f32, f32)> = [].to_vec();
-
+        let mut converted : Vec<CoordinateResponse> = [].to_vec();
+       
         for c in result.0{
-            converted.push(convertToNewCartesian(c, req.compass));
+            converted.push(convert_to_new_cartesian(c, req.compass, predicted_coordinate.x as f32, predicted_coordinate.y as f32));
         }
         converted
     }
 
    
 }
-pub fn convertToNewCartesian(coordinate: Coordinates, compass: f32) -> (f32,f32){
+pub fn convert_to_new_cartesian(coordinate: Coordinates, compass: f32, source_x: f32, source_y: f32) -> CoordinateResponse{
     let old_x = coordinate.x as f32;
     let old_y = coordinate.y as f32;
     let rad  = std::f32::consts::PI / 180.0 * compass;
     
-    let new_x = ((old_x * rad.cos() + old_y * rad.sin()) * 1000.0).round() / 1000.0;
-    let new_y = ((-old_x * rad.sin() + old_y * rad.cos()) * 1000.0).round() / 1000.0;
-    
-    (new_x, new_y)
+    let new_x = (((old_x - source_x)* rad.cos() - (old_y - source_y) * rad.sin() + source_x) * 1000.0).round() / 1000.0;
+    let new_y = (((old_x - source_x)* rad.sin() + (old_y - source_y) * rad.cos() + source_y) * 1000.0).round() / 1000.0;
+    println!("{}, {}", old_x, old_y);
+    println!("{}, {}", new_x, new_y);
+    println!("{}, {}", new_x - source_x, new_y - source_y);
+   CoordinateResponse{
+       x: new_x - source_x,
+       y: new_y - source_y 
+   } 
 }
