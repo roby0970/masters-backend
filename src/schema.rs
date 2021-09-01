@@ -1,4 +1,12 @@
 table! {
+    bles (id) {
+        id -> Int4,
+        title -> Varchar,
+        idspace -> Int4,
+    }
+}
+
+table! {
     coordinates (id) {
         id -> Int4,
         x -> Int4,
@@ -29,14 +37,18 @@ table! {
         area -> Int4,
         longitude -> Float8,
         latitude -> Float8,
+        dataset -> Varchar,
+        compass -> Float8,
     }
 }
 
+joinable!(bles -> spaces (idspace));
 joinable!(coordinates -> pois (idpoi));
 joinable!(coordinates -> spaces (idspace));
 joinable!(pois -> spaces (idspace));
 
 allow_tables_to_appear_in_same_query!(
+    bles,
     coordinates,
     pois,
     spaces,

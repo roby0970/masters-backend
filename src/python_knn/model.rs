@@ -1,12 +1,13 @@
-use crate::{route_request::BLEReading};
+use crate::route_request::BLEReading;
+use diesel::IntoSql;
 use serde::{Deserialize, Serialize};
-use serde_json::Error;
+use serde_json::{Error, Value};
 
-use std::process::Command;
+use std::{process::Command};
 
 const PYEXE: &str = "C:/Users/Robi/AppData/Local/Programs/Python/Python38/python.exe";
 const PYSCRIPT: &str =
-    "c:/diplomski/blefingerprinting android/convert data to fluter class/train.py";
+    "C:/diplomski/blefingerprinting android/backed/backend/py/train.py";
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct RawCoordinate {
@@ -14,21 +15,37 @@ pub struct RawCoordinate {
     pub y: i32,
 }
 
-pub fn classify(source: Vec<BLEReading>) -> Result<RawCoordinate, Error> {
-   
+pub fn classify(source: Vec<BLEReading>, dataset: &str) -> Result<RawCoordinate, Error> {
+     let py_exe = dotenv::var("PY_EXE").expect("Python path not set");
+     let py_train = dotenv::var("PY_TRAIN").expect("Python  script not set");
+     let dataset_dir = dotenv::var("DATASET_FOLDER").expect("Dataset folders path not set");
+
+     let full_dataset = dataset_dir.as_str().to_owned() + dataset;
+
+     println!("{}", py_exe);
+     println!("{}", py_train);
+     println!("{}", dataset_dir);
+     println!("{}", full_dataset);
     let output = Command::new("cmd")
         .args(&[
             "/C",
-            &PYEXE,
-            &PYSCRIPT,
+            &py_exe,
+            &py_train,
             serde_json::to_string(&source).unwrap().as_str(),
+            &full_dataset
         ])
         .output()
         .expect("failed to execute process");
     let response = String::from_utf8(output.stdout).unwrap();
     let j: Vec<&str> = response.split("\r\n").collect::<Vec<&str>>();
-   
-    let predicted_coordinate: Result<RawCoordinate, Error> =
-        serde_json::from_value(serde_json::from_str(j[1]).unwrap());
-    predicted_coordinate
+    return match serde_json::from_str(j[1]) {
+        Ok(val) => {
+            return match serde_json::from_value(val) {
+                Ok(predicted) => Ok(predicted),
+                Err(e) => Err(e),
+            }
+            
+        }
+        Err(e) => Err(e),
+    };
 }
