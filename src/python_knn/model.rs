@@ -5,9 +5,6 @@ use serde_json::{Error, Value};
 
 use std::{process::Command};
 
-const PYEXE: &str = "C:/Users/Robi/AppData/Local/Programs/Python/Python38/python.exe";
-const PYSCRIPT: &str =
-    "C:/diplomski/blefingerprinting android/backed/backend/py/train.py";
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct RawCoordinate {

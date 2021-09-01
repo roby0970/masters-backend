@@ -1,18 +1,23 @@
 use crate::{coordinates::Coordinates, python_knn::RawCoordinate, spaces::Spaces};
-use futures::stream::ForEach;
 use serde::{Deserialize, Serialize};
-use actix_web_actors::ws;
 
-use micromath::F32Ext;
 #[derive(Deserialize, Serialize, Clone)]
 pub struct CoordinateRequest {
     pub idspace: i32,
+    pub name: String,
     pub source: Vec<BLEReading>
+}
+#[derive(Deserialize, Serialize, Clone)]
+pub struct CoordinateWSResponse {
+    pub x: i32,
+    pub y: i32,
+    pub name: String,
 }
 #[derive(Deserialize, Serialize, Clone)]
 pub struct CoordinateResponse {
     pub x: f32,
     pub y: f32,
+    
 }
 
 #[derive(Deserialize, Serialize,Debug, Clone, Copy)]
@@ -31,7 +36,7 @@ pub struct RouteRequest {
 }
 
 impl RouteRequest {
-    pub fn handleCoordinates(req: CoordinateRequest) -> RawCoordinate{
+    pub fn handle_coordinates(req: CoordinateRequest) -> RawCoordinate{
         let source = req.source;
         let space = Spaces::find(req.idspace).unwrap();
         let predicted_coordinate = crate::python_knn::classify(source, space.dataset.as_str()).unwrap();
