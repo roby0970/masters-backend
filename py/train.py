@@ -5,25 +5,15 @@ import pandas as pd
 import json
 from string import Template
 
-#file = 'C:/diplomski/blefingerprinting android/backed/backend/datasets/home_dataset.csv'
-
-
-
-
 def classify(indexes, values):
     
     x = dataset.iloc[:, indexes].values
     x = x.astype(int)
-        
     y = dataset.iloc[:, column_numb-1 ].values
-    
     neigh = KNeighborsClassifier(n_neighbors=1)
     neigh.fit(x, y)
-    
     classification = neigh.predict([values])
-    
     coordX , coordY = classification[0].split('-')
-    
     result = json.dumps({"x": int(coordX), "y" : int(coordY)}) 
     print(result)
     

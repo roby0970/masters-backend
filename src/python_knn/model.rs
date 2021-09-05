@@ -19,10 +19,6 @@ pub fn classify(source: Vec<BLEReading>, dataset: &str) -> Result<RawCoordinate,
 
      let full_dataset = dataset_dir.as_str().to_owned() + dataset;
 
-     println!("{}", py_exe);
-     println!("{}", py_train);
-     println!("{}", dataset_dir);
-     println!("{}", full_dataset);
     let output = Command::new("cmd")
         .args(&[
             "/C",

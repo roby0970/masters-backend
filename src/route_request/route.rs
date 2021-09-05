@@ -14,7 +14,17 @@ use super::{CoordinateRequest, CoordinateWSResponse, RouteRequest};
 
 #[post("/startroute")]
 async fn create(request: web::Json<RouteRequest>) -> Result<HttpResponse, CustomError> {
-    let _response = RouteRequest::handle(request.into_inner());
+    let name = request.id.clone();
+    let request = request.into_inner();
+    let _response_coords = RouteRequest::handle_coordinates(CoordinateRequest{idspace: request.space, name: request.id.clone(), source: request.source.clone()});
+    let _response_coords_with_name = CoordinateWSResponse {
+        x: _response_coords.x,
+        y: _response_coords.y,
+        name: name
+    };
+    let msg = SendMessage{id: 2, name: String::from("Server"), content:serde_json::to_string(&_response_coords_with_name).unwrap()};
+    WebSocketServer::from_registry().do_send(msg);
+    let _response = RouteRequest::handle(request);
     Ok(HttpResponse::Ok().json(_response))
 }
 
@@ -28,7 +38,7 @@ async fn coordinate(request: web::Json<CoordinateRequest> ) -> Result<HttpRespon
         y: _response.y,
         name: name
     };
-    let msg = SendMessage{id: 1, name: String::from("a"), content:serde_json::to_string(&_response_with_name).unwrap()};
+    let msg = SendMessage{id: 1, name: String::from("Server"), content:serde_json::to_string(&_response_with_name).unwrap()};
     WebSocketServer::from_registry().do_send(msg);
     Ok(HttpResponse::Ok().json(_response))
 }

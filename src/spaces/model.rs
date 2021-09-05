@@ -18,7 +18,8 @@ pub struct Space {
     pub longitude: f64,
     pub latitude: f64,
     pub dataset: String,
-    pub compass: f64
+    pub compass: f64,
+    pub coord_size: f64
 }
 #[derive(Deserialize, Serialize, Debug, Queryable, Clone, Insertable)]
 #[table_name = "spaces"]
@@ -29,7 +30,8 @@ pub struct Spaces {
     pub longitude: f64,
     pub latitude: f64,
     pub dataset: String,
-    pub compass: f64
+    pub compass: f64,
+    pub coord_size: f64
 }
 impl Spaces {
     pub fn find_all() -> Result<Vec<Self>, CustomError> {
@@ -84,7 +86,7 @@ impl Spaces {
 }
 impl Space {
     fn from(space: Space) -> Space {
-        Space { title: space.title, area: space.area, longitude: space.longitude,  latitude: space.latitude, dataset: space.dataset, compass:space.compass }
+        Space { title: space.title, area: space.area, longitude: space.longitude,  latitude: space.latitude, dataset: space.dataset, compass:space.compass, coord_size: space.coord_size }
     }
 }
 pub fn distance(x1: f64, x2: f64, y1 : f64, y2: f64,) -> f64 {

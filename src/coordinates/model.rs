@@ -141,9 +141,6 @@ impl Coordinates {
             }
             None => {}
         }
-
-        
-
         succ.into_iter().map(|p| (p, 1)).collect()
     }
 }

@@ -39,6 +39,7 @@ table! {
         latitude -> Float8,
         dataset -> Varchar,
         compass -> Float8,
+        coord_size -> Float8,
     }
 }
 
