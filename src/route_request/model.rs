@@ -13,7 +13,7 @@ pub struct CoordinateWSResponse {
     pub y: i32,
     pub name: String,
 }
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Deserialize, Serialize, Clone, Debug)]
 pub struct CoordinateResponse {
     pub x: f32,
     pub y: f32,
@@ -65,7 +65,6 @@ impl RouteRequest {
         let space_coordinates = Coordinates::find_by_space_id(req.space).unwrap();
         //Find all coordinates for destination POI
         let poi_coordinates = Coordinates::find_by_poi_id(req.destination_poi).unwrap();
-        println!("{:?}", poi_coordinates);
         //If POI has multiple coordinates, take first -- Should improve
         let dest = poi_coordinates.first().unwrap();
 
@@ -73,6 +72,8 @@ impl RouteRequest {
             Some(res) => res,
             None => (vec![Coordinates{id: 0, blocked: true, idpoi:0, idspace:0, walldown: false,wallleft:false, wallright:false, wallup: false,x:0,y:0}], 0),
         };
+
+        println!("{:?}", result);
         //Using the predicted source coordinate, space coordinates and selected destination, find the shortest path
         let result_bad =  match crate::astar::pathfind(source_coordinate, space_coordinates, dest){
             Some(res) => res,
@@ -86,6 +87,7 @@ impl RouteRequest {
         for c in result.0{
             converted.push(convert_to_new_cartesian(c, req.compass, predicted_coordinate.x as f32, predicted_coordinate.y as f32, space.compass as f32, space.coord_size as f32));
         }
+        println!("{:?}", converted);
         converted
     }
 
@@ -105,7 +107,7 @@ pub fn convert_to_new_cartesian(coordinate: Coordinates, compass: f32, source_x:
     let rotated_translated_y = rotated_y - rotated_source_y;
 
    CoordinateResponse{
-       x: rotated_translated_x / space_coord_size,
-       y: rotated_translated_y / space_coord_size 
+       x: rotated_translated_x * space_coord_size,
+       y: rotated_translated_y * space_coord_size 
    } 
 }
